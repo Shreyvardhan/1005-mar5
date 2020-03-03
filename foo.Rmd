@@ -1,0 +1,43 @@
+---
+title: "foo"
+author: "Shreyvardhan Sharma"
+date: "03/03/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(googlesheets4)
+library(fs)
+library(tidyverse)
+library(readr)
+library(janitor)
+library(readxl)
+```
+
+```{r}
+url_old = "https://registrar.fas.harvard.edu/files/fas-registrar/files/class_enrollment_summary_by_term_3.22.19_0.xlsx"
+url_current = "https://registrar.fas.harvard.edu/files/fas-registrar/files/class_enrollment_summary_by_term_2.25.20_0.xlsx"
+
+download.file(url = url_current, destfile = "current.xlsx")
+download.file(url = url_old, destfile = "old.xlsx")
+
+current <- read_excel("current.xlsx", skip=3) %>%
+  clean_names() %>%
+  filter(!is.na(course_name)) %>%
+  select(course_id)
+
+old <- read_excel("old.xlsx", skip=3) %>%
+  clean_names() %>%
+  filter(!is.na(course_name)) %>%
+  select(course_id)
+
+x <- anti_join(current, old, by="course_id")
+
+x
+
+
+
+```
+
+
